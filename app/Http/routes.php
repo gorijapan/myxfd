@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Arr;
+
 /*
 |--------------------------------------------------------------------------
 | Application Routes
@@ -12,31 +14,31 @@
 */
 
 $app->get('/', function () use ($app) {
-    return $app->version();
+    $client = new \Predis\Client();
+    return $client->get('ci_result');
 });
 
 $app->get('/ci/{flag}', function ($flag) use ($app) {
-    $message = sprintf('posted: @%s@', time());
-    $level   = $flag === 'failure' ? 'warning' : 'info';
+    if (!($flag === 'success' || $flag === 'failure')) {
+        return;
+    }
 
-    return app('log')->{$level}($message) ? $message : 0;
+    $client = new \Predis\Client();
+    $client->set('ci_result', $flag);
+
+    return $client->get('ci_result');
 });
 
 $app->post('/ci/{flag}', function ($flag) use ($app) {
-    $message = sprintf('posted: @%s@', time());
-    $level   = $flag === 'failure' ? 'warning' : 'info';
 
-    return app('log')->{$level}($message) ? $message : 0;
-});
-
-$app->get('/xfd', function () use ($app) {
-    $last = '';
-    $fp   = fopen(storage_path('logs/lumen.log'), 'r');
-    while($row = fgets($fp)) {
-        $last = $row;
+    $flag = Arr::get($request->toArray(), 'flag', null);
+    if (!($flag === 'success' || $flag === 'failure')) {
+        return;
     }
-    fclose($fp);
 
-    return strpos($last, 'WARNING') !== false ? 1 : 2;
+    $client = new \Predis\Client();
+    $client->set('ci_result', $flag);
+
+    return $client->get('ci_result');
 });
 
