@@ -14,7 +14,7 @@ use Illuminate\Support\Arr;
 */
 
 $app->get('/', function () use ($app) {
-    $client = new \Predis\Client();
+    $client = new \Predis\Client(config('database.redis'));
     return $client->get('ci_result');
 });
 
@@ -23,7 +23,7 @@ $app->get('/ci/{flag}', function ($flag) use ($app) {
         return;
     }
 
-    $client = new \Predis\Client();
+    $client = new \Predis\Client(config('database.redis'));
     $client->set('ci_result', $flag);
 
     return $client->get('ci_result');
@@ -36,7 +36,7 @@ $app->post('/ci/{flag}', function ($flag) use ($app) {
         return;
     }
 
-    $client = new \Predis\Client();
+    $client = new \Predis\Client(config('database.redis'));
     $client->set('ci_result', $flag);
 
     return $client->get('ci_result');
