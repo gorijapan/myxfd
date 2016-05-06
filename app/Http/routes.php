@@ -11,6 +11,10 @@
 |
 */
 
+$app->get('/', function () use ($app) {
+    return $app->version();
+});
+
 $app->get('/ci/{flag}', function ($flag) use ($app) {
     $message = sprintf('posted: @%s@', time());
     $level   = $flag === 'failure' ? 'warning' : 'info';
