@@ -11,34 +11,28 @@
 |
 */
 
-$app->get('/ci/success', function () use ($app) {
-    $msg = sprintf('posted: @%s@', time());
-    return app('log')->info($msg) ? $msg : $app->version();
+$app->get('/ci/{flag}', function ($flag) use ($app) {
+    $message = sprintf('posted: @%s@', time());
+    $level   = $flag === 'failure' ? 'warning' : 'info';
+
+    return app('log')->{$level}($message) ? $message : 0;
 });
 
-$app->post('/ci/success', function () use ($app) {
-    $msg = sprintf('posted: @%s@', time());
-    return app('log')->info($msg) ? $msg : $app->version();
-});
+$app->post('/ci/{flag}', function ($flag) use ($app) {
+    $message = sprintf('posted: @%s@', time());
+    $level   = $flag === 'failure' ? 'warning' : 'info';
 
-$app->get('/ci/failure', function () use ($app) {
-    $msg = sprintf('posted: @%s@', time());
-    return app('log')->warning($msg) ? $msg : $app->version();
-});
-
-$app->post('/ci/failure', function () use ($app) {
-    $msg = sprintf('posted: @%s@', time());
-    return app('log')->warning($msg) ? $msg : $app->version();
+    return app('log')->{$level}($message) ? $message : 0;
 });
 
 $app->get('/xfd', function () use ($app) {
-    $data = '';
+    $last = '';
     $fp   = fopen(storage_path('logs/lumen.log'), 'r');
     while($row = fgets($fp)) {
-        $data = $row;
+        $last = $row;
     }
     fclose($fp);
 
-    return strpos($data, 'WARNING') !== false ? 1 : 2;
+    return strpos($last, 'WARNING') !== false ? 1 : 2;
 });
 
