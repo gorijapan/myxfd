@@ -16,7 +16,7 @@ use Illuminate\Http\Request;
 define('CI_SUCCESS', 'success');
 define('CI_FAILURE', 'failure');
 
-$app->get('/', function () use ($app) {
+$app->get('/xfd/{param}', function ($param) use ($app) {
     $client = new \Predis\Client(config('database.redis'));
     $result = $client->get('ci_result');
     $result === CI_FAILURE and $client->set('ci_result', CI_SUCCESS);
