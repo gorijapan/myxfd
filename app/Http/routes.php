@@ -21,14 +21,14 @@ $app->get('/xfd/{param}', function ($param) use ($app) {
     $result = $client->get('ci_result');
     $result === CI_FAILURE and $client->set('ci_result', CI_SUCCESS);
 
-    return response()->json(['result' => $result]);
+    return response()->json(['result' => $result, 'time' => time()]);
 });
 
 $app->get('/status-check', function () use ($app) {
     $client = new \Predis\Client(config('database.redis'));
     $result = $client->get('ci_result');
 
-    return response()->json(['result' => $result]);
+    return response()->json(['result' => $result, 'time' => time()]);
 });
 
 $app->get('/ci/{flag}', function ($flag) use ($app) {
@@ -39,7 +39,7 @@ $app->get('/ci/{flag}', function ($flag) use ($app) {
     $client = new \Predis\Client(config('database.redis'));
     $client->set('ci_result', $flag);
 
-    return response()->json(['result' => $client->get('ci_result')]);
+    return response()->json(['result' => $client->get('ci_result'), 'time' => time()]);
 });
 
 $app->post('/ci', function (Request $request) use ($app) {
@@ -51,6 +51,6 @@ $app->post('/ci', function (Request $request) use ($app) {
     $client = new \Predis\Client(config('database.redis'));
     $client->set('ci_result', $flag);
 
-    return response()->json(['result' => $client->get('ci_result')]);
+    return response()->json(['result' => $client->get('ci_result'), 'time' => time()]);
 });
 
