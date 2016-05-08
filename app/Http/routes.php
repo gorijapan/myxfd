@@ -24,6 +24,13 @@ $app->get('/', function () use ($app) {
     return response()->json(['result' => $result]);
 });
 
+$app->get('/status-check', function () use ($app) {
+    $client = new \Predis\Client(config('database.redis'));
+    $result = $client->get('ci_result');
+
+    return response()->json(['result' => $result]);
+});
+
 $app->get('/ci/{flag}', function ($flag) use ($app) {
     if ($flag !== CI_SUCCESS && $flag !== CI_FAILURE) {
         return response()->json();
