@@ -9,9 +9,22 @@ define('CI_SUCCESS', 'success');
 define('CI_FAILURE', 'failure');
 
 
+$app->put('/xfd', function () use ($app) {
+
+    $flag = CI_SUCCESS;
+    if (Redis::get(CI_KEY) === CI_FAILURE) {
+        $flag = CI_FAILURE;
+        Redis::set(CI_KEY, CI_SUCCESS);
+    }
+
+    return response()->json(['result' => $flag]);
+
+});
+
+
 $app->get('/ci', function () use ($app) {
 
-    $flag = Redis::get(CI_KEY) === CI_FAILURE ? CI_FAILURE : CI_SUCCESS;
+    $flag = (Redis::get(CI_KEY) === CI_FAILURE) ? CI_FAILURE : CI_SUCCESS;
 
     return response()->json(['result' => $flag]);
 
