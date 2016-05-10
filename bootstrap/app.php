@@ -24,8 +24,9 @@ $app = new Laravel\Lumen\Application(
 );
 
 $app->configure('database');
+$app->configure('cache');
 
-// $app->withFacades();
+$app->withFacades();
 
 // $app->withEloquent();
 
@@ -83,6 +84,7 @@ $app->singleton(
 // $app->register(App\Providers\AppServiceProvider::class);
 // $app->register(App\Providers\AuthServiceProvider::class);
 // $app->register(App\Providers\EventServiceProvider::class);
+$app->register(Illuminate\Redis\RedisServiceProvider::class);
 
 /*
 |--------------------------------------------------------------------------
